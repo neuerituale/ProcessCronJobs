@@ -68,9 +68,6 @@ wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
 
     /** @var CronJob $cron */
     foreach ($processInstance->crons as $cron) {
-		echo "<pre>";
-		print_r($cron);
-		echo "</pre>";
 
         $row = [];
         $rowClasses = [];
