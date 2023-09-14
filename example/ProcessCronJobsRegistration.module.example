@@ -1,0 +1,39 @@
+<?php
+
+namespace ProcessWire;
+
+class ProcessCronJobsRegistration extends WireData implements Module{
+
+	public static function getModuleinfo(): array
+	{
+		return [
+			'title' => 'Process Cron Jobs Registration',
+			'version' => 100,
+			'summary' => __('Register CronJobs'),
+			'icon' => 'clock-o',
+			'singular' => true,
+			'autoload' => true,
+		];
+	}
+
+	public function __construct() {
+
+		// MyFirstCronJob
+		wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
+
+			/** @var ProcessCronJobs $processCronJobs */
+			$processCronJobs = $event->object;
+			$processCronJobs->add(
+				'MyFirstCronJob',
+				function(CronJob $cron){
+					// do something
+				},
+				['lazyCron' => 'LazyCron::everyDay']
+			);
+
+		}, ['priority' => 10]);
+
+	}
+
+}
+
