@@ -14,7 +14,7 @@ The module provides paths under which cronjobs can be registered. It lists all r
 1. Copy the files for this module to /site/modules/ProcessCronJobs/
 2. In admin: Modules > Refresh. Install ProcessCronJobs.
 3. Go to Setup > CronJobs
-4. Copy and Install example Module to register your CronJobs in the `__constructor()` method.
+4. Copy and Install example Module (`modules/ProcessCronJobs/example/ProcessCronJobsRegistration.module.example`) to register your CronJobs in the `__constructor()` method.
 You can also use any other `__constructor()` method. It makes sense to register the CronJobs as early as possible so that they can also be executed on onInit.
 5. Set up the real cron that calls the ProcessCronJobs provided endpoint.
 	- Type `crontab -e` in your unix console
