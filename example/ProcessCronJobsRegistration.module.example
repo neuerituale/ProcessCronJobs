@@ -8,7 +8,7 @@ class ProcessCronJobsRegistration extends WireData implements Module{
 	{
 		return [
 			'title' => 'Process Cron Jobs Registration',
-			'version' => 100,
+			'version' => 90,
 			'summary' => __('Register CronJobs'),
 			'icon' => 'clock-o',
 			'singular' => true,

@@ -24,7 +24,7 @@ class ProcessCronJobs extends Process implements Module, ConfigurableModule {
     {
         return [
             'title' => 'Process Cron Jobs',
-            'version' => 100,
+            'version' => 90,
             'summary' => __('Manages the execution of CronJobs'),
             'icon' => 'clock-o',
             'singular' => true,

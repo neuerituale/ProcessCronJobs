@@ -73,7 +73,7 @@ wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
 	$processCronJobs = $event->object;
 	$processCronJobs->add(
 		'SuperLongRunningSpecialCronJob',
-		function(CronJob $cron){ echo "What a beautiful day"; },
+		function(CronJob $cron){ echo "I have so much work to do"; },
 		[
 			'timing' => CronJob::timingInit,
 			'ns' => 'longrunning'
