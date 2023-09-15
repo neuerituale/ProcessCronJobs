@@ -4,7 +4,7 @@ namespace ProcessWire;
 
 class ProcessCronJobsRegistration extends WireData implements Module{
 
-	public static function getModuleinfo(): array
+	public static function getModuleInfo(): array
 	{
 		return [
 			'title' => 'Process Cron Jobs Registration',

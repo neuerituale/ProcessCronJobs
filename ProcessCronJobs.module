@@ -20,7 +20,7 @@ class ProcessCronJobs extends Process implements Module, ConfigurableModule {
     public array $crons = [];
     const cacheNs = 'ProcessCronJobs';
 
-    public static function getModuleinfo(): array
+    public static function getModuleInfo(): array
     {
         return [
             'title' => 'Process Cron Jobs',
