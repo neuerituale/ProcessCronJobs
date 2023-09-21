@@ -49,7 +49,8 @@ class ProcessCronJobsConfig extends ModuleConfig
             'name' => 'secret',
             'label' => $this->_('Secret segment'),
             'description' => $this->_('You can add a secret path segment to better protect your Cron calls.'),
-            'notes' => $this->_('Please use only path compatible characters like this: `[a-zA-Z0-9-]`'),
+            'notes' => $this->_('Please use only path compatible characters like this: `[a-zA-Z0-9\-]`'),
+			'pattern' => '[a-zA-Z0-9\-]+',
             'required' => false,
             'columnWidth' => 50
         ]);
