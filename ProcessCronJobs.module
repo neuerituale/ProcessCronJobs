@@ -17,214 +17,218 @@ require_once ('CronJob.php');
 
 class ProcessCronJobs extends Process implements Module, ConfigurableModule {
 
-    public array $crons = [];
-    const cacheNs = 'ProcessCronJobs';
+	public array $crons = [];
+	const cacheNs = 'ProcessCronJobs';
 
-    public static function getModuleInfo(): array
-    {
-        return [
-            'title' => 'Process Cron Jobs',
-            'version' => 90,
-            'summary' => __('Manages the execution of CronJobs'),
-            'icon' => 'clock-o',
-            'singular' => true,
-            'autoload' => true,
-            'page' => [
-                'name' => 'cronjobs',
-                'parent' => 'setup',
-                'title' => __('CronJobs'),
-            ],
-        ];
-    }
+	public static function getModuleInfo(): array
+	{
+		return [
+			'title' => 'Process Cron Jobs',
+			'version' => 90,
+			'summary' => __('Manage the execution of CronJobs'),
+			'icon' => 'clock-o',
+			'singular' => true,
+			'autoload' => true,
+			'permission' => 'cronjobs-list',
+			'permissions' => [
+				'cronjobs-list' => 'List and call cron jobs.'
+			],
+			'page' => [
+				'name' => 'cronjobs',
+				'parent' => 'setup',
+				'title' => __('CronJobs'),
+			],
+		];
+	}
 
-    /**
-     * Init
-     * @return void
-     * @throws WireException
-     */
-    public function init(): void
-    {
-        $this->addHookBefore('Modules::saveConfig', $this, 'hookClearCaches');
-        $this->register();
-        $this->run(CronJob::timingInit);
-    }
+	/**
+	 * Init
+	 * @return void
+	 * @throws WireException
+	 */
+	public function init(): void
+	{
+		$this->addHookBefore('Modules::saveConfig', $this, 'hookClearCaches');
+		$this->register();
+		$this->run(CronJob::timingInit);
+	}
 
-    /**
-     * Ready
-     * @return void
-     * @throws WireException
-     */
-    public function ready(): void
-    {
-        $this->run(CronJob::timingReady);
-    }
+	/**
+	 * Ready
+	 * @return void
+	 * @throws WireException
+	 */
+	public function ready(): void
+	{
+		$this->run(CronJob::timingReady);
+	}
 
-    /**
-     * Register cron
-     * @return void
-     */
-    public function ___register(): void
-    {}
+	/**
+	 * Register cron
+	 * @return void
+	 */
+	public function ___register(): void
+	{}
 
-    /**
-     * Hookable Method to disable the crons
-     * @return bool
-     */
-    public function ___isEnabled() {
-        return (bool) $this->enabled;
-    }
+	/**
+	 * Hookable Method to disable the crons
+	 * @return bool
+	 */
+	public function ___isEnabled() {
+		return (bool) $this->enabled;
+	}
 
-    /**
-     * @param int $timing
-     * @return void
-     * @throws WireException
-     */
-    public function run(int $timing = CronJob::timingReady): void
-    {
-        $requestPath = wire()->config->requestPath();
-        $path = $this->getPath();
-        $crons = $this->crons;
+	/**
+	 * @param int $timing
+	 * @return void
+	 * @throws WireException
+	 */
+	public function run(int $timing = CronJob::timingReady): void
+	{
+		$requestPath = wire()->config->requestPath();
+		$path = $this->getPath();
+		$crons = $this->crons;
 
-        wire()->addHook(rtrim($path, '/') . '(\/[a-z0-9-]+)?/', function() use($path, $crons, $requestPath, $timing) {
+		wire()->addHook(rtrim($path, '/') . '(\/[a-z0-9-]+)?/', function() use($path, $crons, $requestPath, $timing) {
 
-            // set last run time
-            wire()->cache->saveFor(self::cacheNs, 'lastRun', time());
+			// set last run time
+			wire()->cache->saveFor(self::cacheNs, 'lastRun', time());
 
-            // Workaround to bypass the response type check in LazyCron::afterPageView
-            wire()->addHookAfter('ProcessPageView::finished', function() {
-                wire()->process->setResponseType(ProcessPageView::responseTypeNormal);
-            }, ['priority' => 1]);
+			// Workaround to bypass the response type check in LazyCron::afterPageView
+			wire()->addHookAfter('ProcessPageView::finished', function() {
+				wire()->process->setResponseType(ProcessPageView::responseTypeNormal);
+			}, ['priority' => 1]);
 
-            foreach (array_filter($crons, function($cron) use($timing) { return $cron->timing === $timing; }) as $cron) {
-                if($requestPath === $path . $cron->getPath()) $cron->run();
-            }
+			foreach (array_filter($crons, function($cron) use($timing) { return $cron->timing === $timing; }) as $cron) {
+				if($requestPath === $path . $cron->getPath()) $cron->run();
+			}
 
-            return true;
-        });
-    }
+			return true;
+		});
+	}
 
-    /**
-     * @param CronJob|string $name
-     * @param callable $callback
-     * @param array $options
-     * @return CronJob
-     */
-    public function ___add(CronJob|string $name, callable $callback, array $options = []): CronJob
-    {
-        $options = array_merge([
-            'lazyCron' => null,
-            'timing' => CronJob::timingReady,
-            'ns' => null
-        ], $options);
+	/**
+	 * @param CronJob|string $name
+	 * @param callable $callback
+	 * @param array $options
+	 * @return CronJob
+	 */
+	public function ___add(CronJob|string $name, callable $callback, array $options = []): CronJob
+	{
+		$options = array_merge([
+			'lazyCron' => null,
+			'timing' => CronJob::timingReady,
+			'ns' => null
+		], $options);
 
-        if($name instanceof CronJob) {
-            $cron = $name;
-        } else {
-            $cron = new CronJob();
-            $cron->setArray($options);
-            $cron->setArray([
-                'name' => $name,
-                'callback' => $callback,
-            ]);
-        }
+		if($name instanceof CronJob) {
+			$cron = $name;
+		} else {
+			$cron = new CronJob();
+			$cron->setArray($options);
+			$cron->setArray([
+				'name' => $name,
+				'callback' => $callback,
+			]);
+		}
 
-        $this->crons[$cron->name] = $cron;
-        return $cron;
-    }
+		$this->crons[$cron->name] = $cron;
+		return $cron;
+	}
 
-    /**
-     * remove a cron
-     * @param $name
-     * @return CronJob|null
-     */
-    public function ___remove($name): ?CronJob
-    {
-        if(array_key_exists($name, $this->crons)) {
-            $result = $this->crons[$name];
-            unset($this->crons[$name]);
-            return $result;
-        }
-        return null;
-    }
+	/**
+	 * remove a cron
+	 * @param $name
+	 * @return CronJob|null
+	 */
+	public function ___remove($name): ?CronJob
+	{
+		if(array_key_exists($name, $this->crons)) {
+			$result = $this->crons[$name];
+			unset($this->crons[$name]);
+			return $result;
+		}
+		return null;
+	}
 
-    /**
-     * @param $name
-     * @return CronJob|null
-     */
-    public function getCron($name): ?CronJob
-    {
-        return array_key_exists($name, $this->crons) ? $this->crons[$name] : null;
-    }
+	/**
+	 * @param $name
+	 * @return CronJob|null
+	 */
+	public function getCron($name): ?CronJob
+	{
+		return array_key_exists($name, $this->crons) ? $this->crons[$name] : null;
+	}
 
-    /**
-     * Show table
-     * @return array
-     */
-    public function ___execute(): array
-    {
-        return [
-            'processInstance' => $this,
-        ];
-    }
+	/**
+	 * Show table
+	 * @return array
+	 */
+	public function ___execute(): array
+	{
+		return [
+			'processInstance' => $this,
+		];
+	}
 
-    /**
-     * Force run cron jon
-     * @return void
-     * @throws WireException
-     */
-    public function ___executeRun(): void
-    {
-        $name = $this->sanitizer->pascalCase($this->input->urlSegment2);
-        $cron = $this->getCron($name);
+	/**
+	 * Force run cron jon
+	 * @return void
+	 * @throws WireException
+	 */
+	public function ___executeRun(): void
+	{
+		$name = $this->sanitizer->pascalCase($this->input->urlSegment2);
+		$cron = $this->getCron($name);
 
-        if($cron instanceof CronJob) {
+		if($cron instanceof CronJob) {
 
-            if($cron->run(true)) $this->message(sprintf($this->_('The cronjob “%s” was successfully executed'), $cron->name));
-            elseif ($cron->lastError) $this->error($cron->lastError);
-        } else {
-            $this->error($this->_('The cronjob could not be found!'));
-        }
+			if($cron->run(true)) $this->message(sprintf($this->_('The cronjob “%s” was successfully executed'), $cron->name));
+			elseif ($cron->lastError) $this->error($cron->lastError);
+		} else {
+			$this->error($this->_('The cronjob could not be found!'));
+		}
 
-        $this->session->redirect($this->page->url);
-    }
+		$this->session->redirect($this->page->url);
+	}
 
-    /**
-     * Get base path
-     * @param bool $mask
-     * @return string
-     */
-    public function getPath(bool $mask = false): string
-    {
-        $path = wire()->config->urls->root . trim($this->path, '/') . '/';
-        if(!empty($this->secret)) {
-            $path .= $mask
-                ? '*****/'
-                : (trim($this->secret) . '/');
-        }
-        return $path;
-    }
+	/**
+	 * Get base path
+	 * @param bool $mask
+	 * @return string
+	 */
+	public function getPath(bool $mask = false): string
+	{
+		$path = wire()->config->urls->root . trim($this->path, '/') . '/';
+		if(!empty($this->secret)) {
+			$path .= $mask
+				? '*****/'
+				: (trim($this->secret) . '/');
+		}
+		return $path;
+	}
 
-    /**
-     * Delete cache entries
-     * @param HookEvent $event
-     * @return void
-     */
-    public function hookClearCaches(HookEvent $event){
-        if ($event->arguments[0] !== $this->className) return;
+	/**
+	 * Delete cache entries
+	 * @param HookEvent $event
+	 * @return void
+	 */
+	public function hookClearCaches(HookEvent $event){
+		if ($event->arguments[0] !== $this->className) return;
 
-        $data = $event->arguments(1);
-        if(is_array($data) && array_key_exists('clearCaches', $data) && $data['clearCaches']) {
+		$data = $event->arguments(1);
+		if(is_array($data) && array_key_exists('clearCaches', $data) && $data['clearCaches']) {
 
-            $cache = wire()->cache;
+			$cache = wire()->cache;
 
-            // get cache entry count and delete entries
-            $cacheEntriesCount = count($cache->getFor(CronJob::cronjobCacheNs, '*'));
-            $cache->deleteFor(CronJob::cronjobCacheNs);
-            wire()->message(sprintf(__('%s cache entries deleted'), $cacheEntriesCount));
-            $data['clearCaches'] = 0;
-            $event->arguments(1, $data);
-        }
-    }
+			// get cache entry count and delete entries
+			$cacheEntriesCount = count($cache->getFor(CronJob::cronjobCacheNs, '*'));
+			$cache->deleteFor(CronJob::cronjobCacheNs);
+			wire()->message(sprintf(__('%s cache entries deleted'), $cacheEntriesCount));
+			$data['clearCaches'] = 0;
+			$event->arguments(1, $data);
+		}
+	}
 
 }
 

@@ -1,0 +1,25 @@
+{
+    "name": "nr/processcronjobs",
+    "type": "pw-module",
+    "description": "Manage the execution of CronJobs",
+    "keywords": [ "processwire", "module", "cronjob" ],
+    "homepage": "https://github.com/neuerituale/ProcessCronJobs",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Neue Rituale",
+            "email": "code@neuerituale.com",
+            "homepage": "https://neuerituale.com/",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "beta",
+    "require": {
+        "hari/pw-module": "~1.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "hari/pw-module": true
+        }
+    }
+}
