@@ -151,19 +151,22 @@ class CronJob extends WireData {
         return $this->ns ? (trim($this->ns, '/') . '/') : '';
     }
 
-    /**
-     * Run cron job
-     * @param $force
-     * @return bool|void
-     * @throws WireException
-     */
-    public function run($force = false) {
-        if(!is_callable($this->callback)) return false;
+	/**
+	 * Run cron job
+	 * @param bool $force
+	 * @return bool|void
+	 * @throws WireException
+	 */
+    public function run(bool $force = false) {
+
+		// skip invalid & disabled
+        if(
+			!is_callable($this->callback) ||
+			($this->disabled && !$force)
+        ) return false;
 
         // via lazy cron
         if($this->lazyCron && !$force) {
-
-            if($this->disabled) return false;
             $cron = $this;
 
             wire()->addHook($this->lazyCron, function() use($cron) {

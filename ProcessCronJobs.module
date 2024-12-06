@@ -24,7 +24,7 @@ class ProcessCronJobs extends Process implements Module, ConfigurableModule {
 	{
 		return [
 			'title' => 'Process Cron Jobs',
-			'version' => 91,
+			'version' => 100,
 			'summary' => __('Manage the execution of CronJobs'),
 			'icon' => 'clock-o',
 			'singular' => true,
@@ -99,6 +99,7 @@ class ProcessCronJobs extends Process implements Module, ConfigurableModule {
 				wire()->process->setResponseType(ProcessPageView::responseTypeNormal);
 			}, ['priority' => 1]);
 
+			/** @var CronJob $cron */
 			foreach (array_filter($crons, function($cron) use($timing) { return $cron->timing === $timing; }) as $cron) {
 				if($requestPath === $path . $cron->getPath()) $cron->run();
 			}
