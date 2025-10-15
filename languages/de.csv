@@ -1,0 +1,96 @@
+en,default,description,file,hash
+Auto,=,,site/modules/ProcessCronJobs/CronJob.php,06b9281e396db002010bde1de57262eb
+Lazy,=,,site/modules/ProcessCronJobs/CronJob.php,46a9ebdb80117bfa1f0cdea65438290a
+Manual,=,,site/modules/ProcessCronJobs/CronJob.php,e1ba155a9f2e8c3be94020eef32a0301
+Error,Fehler,,site/modules/ProcessCronJobs/CronJob.php,902b0d55fddef6f8d651fe1035b7d4bd
+onInit,=,,site/modules/ProcessCronJobs/CronJob.php,af0fbe6e58135627977419525f3d65d7
+onReady,=,,site/modules/ProcessCronJobs/CronJob.php,f6920b88f5f0e9a510ce138b060d13bc
+"CronError in ""%1$s"": %2$s",=,,site/modules/ProcessCronJobs/CronJob.php,1697caa28364342a2f3cc4afb798acbf
+Unknown,Unbekannt,,site/modules/ProcessCronJobs/CronJob.php,88183b946cc5f0e8c96b2e66e1c74a7e
+en,default,description,file,hash
+"CronJobs are currently disabled.","CronJobs sind derzeit deaktiviert.",,site/modules/ProcessCronJobs/views/execute.php,ece4314f7559776e6485e49a72274757
+"No cronjobs registered.","Es sind keine Cronjobs registriert.",,site/modules/ProcessCronJobs/views/execute.php,3d779ae878c6240dead26e99e3be827b
+Name,=,,site/modules/ProcessCronJobs/views/execute.php,49ee3087348e8d44e1feda1917443987
+Type,Typ,,site/modules/ProcessCronJobs/views/execute.php,a1fa27779242b4902f7ae3bdd5c6d508
+Timing,=,,site/modules/ProcessCronJobs/views/execute.php,d3b69e993f4e9bf9c479c7e794ede387
+Path,Pfad,,site/modules/ProcessCronJobs/views/execute.php,ac70412e939d72a9234cdebb1af5867b
+"Last run","Letzte Ausführung",,site/modules/ProcessCronJobs/views/execute.php,c318b230bb485d7c4f2bdec93d58e4f5
+"Last trigger","Letzter Trigger",,site/modules/ProcessCronJobs/views/execute.php,0164870a5c1f60c0a6e849da65a160e2
+Action,Aktion,,site/modules/ProcessCronJobs/views/execute.php,004bf6c9a40003140292e97330236c53
+"This cron is currently disabled","Dieser CronJob ist derzeit deaktiviert.",,site/modules/ProcessCronJobs/views/execute.php,acc04aa3177d0c4534c335c464cbf220
+"Unfortunately, LazyCron setting is not allowed in crons with namespaces, as they block LazyCrons running in parallel.","Leider ist die LazyCron-Einstellung in Cron-Jobs mit Namespaces nicht zulässig, da diese die parallele Ausführung von LazyCrons blockieren.",,site/modules/ProcessCronJobs/views/execute.php,77bfcd88f2c5c1b48e9f5a4c44770b16
+Never,Nie,,site/modules/ProcessCronJobs/views/execute.php,6e7b34fa59e1bd229b207892956dc41c
+"Execute this cronjob","Führen Sie diesen Cronjob aus.",,site/modules/ProcessCronJobs/views/execute.php,e7cdea35c13031e7cc5fa3fd95c02280
+Run,Ausführen,,site/modules/ProcessCronJobs/views/execute.php,c5301693c4e792bcd5a479ef38fb8f8d
+"Last run: %s","Letzte Ausführung: %s",,site/modules/ProcessCronJobs/views/execute.php,853929a9816755d7f5717b2fb99ea1ba
+en,default,description,file,hash
+"Trigger path","Trigger Pfad",,site/modules/ProcessCronJobs/ProcessCronJobsConfig.php,8569c4d65d2ef9a94695d7585f6b89b2
+"The path to be called by the cronjob.","Der Pfad, der vom Cronjob aufgerufen werden soll.",,site/modules/ProcessCronJobs/ProcessCronJobsConfig.php,1041d41481b1b297eb7f815a91489366
+"Set to `cron/` for an cron command like this: `\* \* \* \* \*  curl --silent https://example.come/cron/ &>/dev/null`","Verwende `cron/` für folgenden Cron-Befehl: `\* \* \* \* \* curl --silent https://example.come/cron/ &>/dev/null`",,site/modules/ProcessCronJobs/ProcessCronJobsConfig.php,7d6461f029d5d750289ba549c204e154
+"Secret segment","Geheimes Segment",,site/modules/ProcessCronJobs/ProcessCronJobsConfig.php,cb159d8dcc13e3415c9a9208d97448c1
+"You can add a secret path segment to better protect your Cron calls.","Um Cron-Aufrufe besser zu schützen, kann ein geheimes Pfadsegment angefügt werden.",,site/modules/ProcessCronJobs/ProcessCronJobsConfig.php,45ff3a1aa5404fab45fd0181d7ebba40
+"Please use only path compatible characters like this: `[a-zA-Z0-9\-]`","Bitte verwende nur Pfad-kompatible Zeichen wie diese: `[a-zA-Z0-9\-]`",,site/modules/ProcessCronJobs/ProcessCronJobsConfig.php,7aaa7d70a795e7421ee93dee43b93a31
+Enabled,Aktiviert,,site/modules/ProcessCronJobs/ProcessCronJobsConfig.php,00d23a76e43b46dae9ec7aa9dcbebb32
+Disabled,Deaktiviert,,site/modules/ProcessCronJobs/ProcessCronJobsConfig.php,b9f5c797ebbf55adccdd8539a65a0241
+"You can also control the status via the hookable method `ProcessCronJobs::isEnabled`. If you have hooks that are called onInit, this should happen in a `__construct()` method of a module.","Der Status kann auch über die hookbare Methode `ProcessCronJobs::isEnabled` gesteuert werden. Wenn Hooks bei onInit aufgerufen werden sollen, sollte dies in einer `__construct()`-Methode eines Moduls geschehen.",,site/modules/ProcessCronJobs/ProcessCronJobsConfig.php,f59d6864de69485443e12ed21e565eec
+"%s cache items found.","%s Cache-Elemente gefunden.",,site/modules/ProcessCronJobs/ProcessCronJobsConfig.php,5b2b3ab08f1a8fbfd76ac7ce0da68a54
+Status,=,,site/modules/ProcessCronJobs/ProcessCronJobsConfig.php,ec53a8c4f07baed5d8825072c89799be
+Caches,=,,site/modules/ProcessCronJobs/ProcessCronJobsConfig.php,726e4408929c734666ebc0a0557674bf
+"Clear all caches","Alle Caches löschen",,site/modules/ProcessCronJobs/ProcessCronJobsConfig.php,a9c3841a828f913dde4c1f251593f41b
+en,default,description,file,hash
+"Unknown/invalid language","Unbekannte/ungültige Sprache",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,2df236e737fce3ea9b2aafd92aefabf8
+"You do not have permission to edit this language","Sie haben nicht die Berechtigung, diese Sprache zu bearbeiten",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,c739fa5cd3140c5f6d9c874c9f7f0c06
+"No files in this language for field %s","Keine Dateien in dieser Sprache für das Feld %s",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,1cadf174f70d643ae126661933c29496
+"Select File(s)","Datei(en) auswählen","Headline when adding new translation files",wire/modules/LanguageSupport/ProcessLanguageTranslator.module,cf9b6034d657b9e496cf2507c0ed54b2
+"Select a file (or multiple files) and click Submit to create new %s translation files.","Wählen Sie eine Datei (oder mehrere Dateien) und klicken Sie auf Senden, um neue %s-Übersetzungsdateien zu erstellen.",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,97b4a79a9a82063ffc66201622b97961
+"Translatable files in %s","Übersetzbare Dateien in %s",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,7f4f03f8ce0547dc27519ec6aaba5274
+"Translation files exist","Übersetzungsdateien existieren",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,f6da161610e69fd47285a4fb73023161
+"No translation files exist","Keine Übersetzungsdateien vorhanden",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,9310f3093e8580c52cbbadc2e4298018
+"Enter file to translate","Zu übersetzende Datei eingeben",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,2c1b934717b59076f55e53b7a097efbb
+"Enter the path and filename to translate. This should be entered relative to the site root installation.","Geben Sie den Pfad und den Dateinamen für die Übersetzung ein. Dieser sollte relativ zum Stammverzeichnis der Website eingegeben werden.",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,ad5156526794edff80df65b5362dd4c1
+Example:,Beispiel:,,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,81eeab9506186e2dca8faefa78d54067
+"Refresh File List","Dateiliste aktualisieren",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,9a7e6c43d5ae842c6aff819f4853ef76
+"Added %s","Hinzugefügt %s","Added [filename]",wire/modules/LanguageSupport/ProcessLanguageTranslator.module,b259a9c95331e8ade9dca22c5fb2062c
+"Found %s","Gefunden %s","Found [filename]",wire/modules/LanguageSupport/ProcessLanguageTranslator.module,d0a467da1b045cff8ba333833df858bd
+"That file is already in the system","Diese Datei ist bereits im System vorhanden",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,56ebdb7fbca39f9ec77bf8e994b127ae
+"That file has no translatable phrases","Diese Datei enthält keine übersetzbaren Phrasen",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,4ff5d8112871bb3d23262bb8611f507b
+"File does not exist","Die Datei existiert nicht",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,e8edb193e1cb171a17efe2765d72af71
+"Fallback: when untranslated, the text “%1$s” is used, which is translated from “%2$s”.","Fallback: wenn unübersetzt, wird der Text ""%1$s"" verwendet, der aus ""%2$s"" übersetzt wird.",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,201cd1463929afbbd095c4803262ceae
+"If no text is provided, the common translation “**%s**” will be used.","If no text is provided, the common translation “%s” will be used.",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,b2d2f26148deb14bf22ab1fcd1d231a1
+"Enter a single plus sign “**+**” above to also mark this field as translated.","Geben Sie oben ein einfaches Pluszeichen ""+"" ein, um auch dieses Feld als übersetzt zu markieren.",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,54380879a24d554e549d4d18f998dfa9
+"The following unused translations were found. This means that the original untranslated text was either changed or deleted. It is recommended that you delete abandoned translations unless you need to keep them to copy/paste to a new translation.","Die folgenden unbenutzten Übersetzungen wurden gefunden. Das bedeutet, dass der ursprüngliche, nicht übersetzte Text entweder geändert oder gelöscht wurde. Es wird empfohlen, verlassene Übersetzungen zu löschen, es sei denn, Sie müssen sie behalten, um sie in eine neue Übersetzung zu kopieren/einzufügen.",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,c5bd6d3cb3eba13bfb553d4f6cd34d84
+[empty],[leer],,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,1b296d99ce0be35a6e13ff0465794ea0
+Delete?,Löschen?,"Checkbox label",wire/modules/LanguageSupport/ProcessLanguageTranslator.module,786a3ffbf64dbd32b887357bfb981ab3
+"Unable to load textdomain","Textdomain kann nicht geladen werden",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,cea7ade6fb9d07ee7e46b6c003d3ea0a
+"File does not exist:","Die Datei existiert nicht:",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,96847fc3fd81c6824a46038486c7a966
+"(translation file not needed? textdomain: %s)","(Übersetzungsdatei nicht erforderlich? textdomain: %s)",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,620c3d12b2ebf6fba6fc8ca8bd7d5f7e
+"Translate %1$s to %2$s","Übersetze %1$s in %2$s",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,048378af50897cd55a4fba47686151da
+"Each of the inputs below represents a block of text to translate.","Jede der unten stehenden Eingaben stellt einen zu übersetzenden Textblock dar.",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,cc3280a236d930bb719b4bbd4e60618b
+"The text shown immediately above each input is the text that should be translated to %s.","Der unmittelbar über jeder Eingabe angezeigte Text ist der Text, der in %s übersetzt werden soll.",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,2373d8c961aba6c7a710d9e28796fc94
+"If you leave an input blank, the non-translated text will be used.","Wenn Sie eine Eingabe leer lassen, wird der nicht übersetzte Text verwendet.",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,2201c8e27207f315872b8dade43506d6
+"If the translation will be identical to the original, you may also enter a single ""="" (equals sign) for the translation and it will be marked as translated.","Wenn die Übersetzung mit dem Original identisch ist, können Sie auch ein einzelnes ""="" (Gleichheitszeichen) für die Übersetzung eingeben und sie wird als übersetzt markiert.",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,28879280857d9ccc118fbd72fc972ad0
+"You may also [download](%1$s) or [view](%2$s) a CSV file with these translations, edit them, and then [upload them here](%3$s).","Sie können auch eine CSV-Datei mit diesen Übersetzungen [herunterladen](%1$s) oder [ansehen](%2$s), sie bearbeiten und dann hier hochladen.",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,24e75fc33422e42d84ba0fc01cdc8579
+"The textdomain for this file is: %s","Die Textdomäne für diese Datei lautet: %s",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,45f6644c6b04fc718813131f29eb414f
+"Only show blocks that are not yet translated","Nur Blöcke anzeigen, die noch nicht übersetzt sind",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,936fa205069d0afdfda6096184e8479d
+"Save + Exit","Speichern + Beenden",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,4ec2fa1aa32d93e6fd11a255fc3507bc
+"Save + Next","Speichern + Weiter",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,fbf51b23dec9d964dea27ac78b55f042
+"Saved %s","Gespeicherte %s",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,6f90a6f3d4f23a403a3ce6988c1ee05b
+"There is no next file to edit.","Es gibt keine nächste Datei zu bearbeiten.",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,77ee287e7787dda03867ac2f9b312990
+"%s does not exist or is not a directory","%s existiert nicht oder ist kein Verzeichnis",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,b817c7fc9a774b9a22172e59c228a9cb
+", '$this->_n(', '$this->_x(",=,,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,c5e313f97cfed8076c6f3700a1ebb121
+"Built search phrase index","Suchbegriffsindex erstellt",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,569502b1966b126a6efe0caa41995ea1
+"Supported file extensions for translatable files",,,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,c65348dab3dac8d8eea9c3d8839ce5c6
+"Enter a space-separated list of file extensions (`php` and `module` are required).",,,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,dbb38b2c4ea4d2a790c90d6ab74b145d
+"Language Translator",Sprachübersetzer,,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,4e6dc4bdaf134f7fad78b433b1939a65
+"Provides language translation capabilities for ProcessWire core and modules.","Bietet Sprachübersetzungsfunktionen für die ProcessWire-Core und Module.",,wire/modules/LanguageSupport/ProcessLanguageTranslator.module,1fee8873d9207b652a71dd813056be96
+file,Datei,"Context: table-header",wire/modules/LanguageSupport/ProcessLanguageTranslator.module,8c34ba0c56e244ea1276950be05e92a9
+phrases,Phrasen,"Context: table-header",wire/modules/LanguageSupport/ProcessLanguageTranslator.module,d701be1df4973dc762ea09d103d876e4
+"last modified","zuletzt geändert","Context: table-header",wire/modules/LanguageSupport/ProcessLanguageTranslator.module,2de802188057514240806136db489f15
+"Select File(s)","Datei(en) auswählen","Context: breadcrumb",wire/modules/LanguageSupport/ProcessLanguageTranslator.module,efa359764bf5df35c0cf83f31bae2b03
+Save,Speichern,"Context: button",wire/modules/LanguageSupport/ProcessLanguageTranslator.module,d5778a8b84efb3233d070016adb93326
+"%d abandoned translation","%d verlassene Übersetzung","Singular Version",wire/modules/LanguageSupport/ProcessLanguageTranslator.module,35cce6ee9c7d52816335cd71a8cc8bdd
+"%d abandoned translations","%d verlassene Übersetzungen","Plural Version",wire/modules/LanguageSupport/ProcessLanguageTranslator.module,5f26b7cdb0df95ffde976ce9b5aa776c
+"%d translation changed","%d Übersetzung geändert","Singular Version",wire/modules/LanguageSupport/ProcessLanguageTranslator.module,1a8046c237a8b5598bdbe32fab01c78a
+"%d translations changed","%d Übersetzungen geändert","Plural Version",wire/modules/LanguageSupport/ProcessLanguageTranslator.module,d551aba9d90e56853a0f2b1c19e57ad1
+"%d abandoned translation removed","%d verlassene Übersetzung entfernt","Singular Version",wire/modules/LanguageSupport/ProcessLanguageTranslator.module,958a564da0596b34819d36e7a4c27b0a
+"%d abandoned translations removed","%d verlassene Übersetzungen entfernt","Plural Version",wire/modules/LanguageSupport/ProcessLanguageTranslator.module,cdaca5c503d1eb7163af5ec57f2e5bc9

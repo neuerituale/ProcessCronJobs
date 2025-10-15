@@ -110,11 +110,11 @@ class ProcessCronJobs extends Process implements Module, ConfigurableModule {
 
 	/**
 	 * @param CronJob|string $name
-	 * @param callable $callback
+	 * @param callable|string $callback
 	 * @param array $options
 	 * @return CronJob
 	 */
-	public function ___add(CronJob|string $name, callable $callback, array $options = []): CronJob
+	public function ___add(CronJob|string $name, callable|string $callback, array $options = []): CronJob
 	{
 		$options = array_merge([
 			'lazyCron' => null,

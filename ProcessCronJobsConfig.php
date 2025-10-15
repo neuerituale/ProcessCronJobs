@@ -39,7 +39,7 @@ class ProcessCronJobsConfig extends ModuleConfig
 			'name' => 'path',
 			'label' => $this->_('Trigger path'),
             'description' => $this->_('The path to be called by the cronjob.'),
-            'notes' => $this->_('Set to `cron/` for an cron command like this: `\* \* \* \* \*  curl --silent https://example.come/cron/ &>/dev/null` '),
+            'notes' => $this->_('Set to `cron/` for an cron command like this: `\* \* \* \* \*  curl --silent https://example.come/cron/ &>/dev/null`'),
             'required' => true,
             'columnWidth' => 50
 		]);

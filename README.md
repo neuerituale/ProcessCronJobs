@@ -96,12 +96,41 @@ You will find the following configuration options in the module settings:
 
 ![Configuration](https://user-images.githubusercontent.com/11630948/268075104-79d78c14-ea8a-4735-80ee-1c32ecddd73d.png)
 
+### Different Callback Types
+You can define callbacks in different ways:
+
+#### Anonymous Function
+```php
+$processCronJobs->add(
+	'AnonymousFunctionCronJob',
+	function(CronJob $cron){
+		echo "Using anonymous function";
+	}
+);
+```
+
+#### Object Method
+```php
+$processCronJobs->add(
+	'ObjectMethodCronJob',
+	[$this, 'myFunction']
+);
+```
+
+#### Static Class Method
+```php
+$processCronJobs->add(
+	'StaticMethodCronJob',
+	'\\ProcessWire\\MyClass::myStaticFunction'
+);
+```
+
 ## The CronJob object
 
 | Option       | Type         | Default                     | Description                                                                                                                                                                                                                                                                                                                                                                                            |
 |--------------|--------------|-----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `name`       | String       |                             | Unique name in PascalCase e.g. `MyFirstCronJob`.                                                                                                                                                                                                                                                                                                                                                       |
-| `callback`   | Callable     | `function(CronJob $cron){}` | Function to be executed                                                                                                                                                                                                                                                                                                                                                                                |
+| `callback`   | Callable     | `function(CronJob $cron){}` | Function to be executed. Can be an anonymous function, an array `[$object, 'methodName']`, or a static class method string `'\\ProcessWire\\MyClass::myStaticFunction'`.                                                                                                                                                                                                                              |
 | `lazyCron`   | null, String | `null`                      | If empty, the CronJob is executed without delay as soon as the path is called.                                                                                                                                                                                                                                                                                                                         |
 | `ns`         | null, String | `null`                      | If empty, the CronJob is called via the default path.                                                                                                                                                                                                                                                                                                                                                  |
 | `timing`     | Integer      | `CronJob::timingReady`      | The CronJon can be called either at onInit (1) or onReady (2). OnInit is earlier and therefore faster, but not all functions of ProcessWire are available here, e.g. page and language.                                                                                                                                                                                                                |

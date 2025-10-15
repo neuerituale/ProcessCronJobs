@@ -77,10 +77,6 @@ class CronJob extends WireData {
             }
         }
 
-        else if ($key === 'callback' && !is_callable($value)) {
-            $value = function() {};
-        }
-
         else if($key === 'trigger') {
             $value = (int) $value;
         }
@@ -131,6 +127,14 @@ class CronJob extends WireData {
         else if($key === 'lazyCron' && !empty($this->ns)) {
             return null;
         }
+
+		else if($key === 'callback') {
+			$callback = $this->data['callback'];
+			return is_callable($callback)
+				? $callback
+				: function () { throw new \Exception('Callback is not callable'); };
+
+		}
 
         return parent::get($key);
     }
