@@ -10,11 +10,26 @@ namespace ProcessWire;
 /**
  * @global ProcessCronJobs $processInstance
  * @global Config $config
+ * @global Modules $modules
  * @global WireCache $cache
  * @global WireDateTime $datetime
  */
 
-?>
+$hasLazyCron = count(array_column($processInstance->crons, 'lazyCron'));
+if($hasLazyCron && !$modules->isInstalled('LazyCron')) :
+	$url = $modules->getModuleEditUrl('LazyCron', false);
+	?>
+
+	<div class="uk-card uk-alert-warning uk-card-primary uk-margin">
+		<div>
+			<div class="uk-card-body uk-text-default uk-text-emphasis uk-padding-small uk-text-center">
+				<?= __('You have registered lazy crons, but the module has not yet been installed.'); ?><br>
+				<a href="<?= $url; ?>"><?= __('Please install the lazycron core module.'); ?></a>
+			</div>
+		</div>
+	</div>
+
+<?php endif; ?>
 
 <?php if(!$processInstance->isEnabled()) : ?>
 	<div class="uk-card uk-alert-warning uk-card-primary uk-margin">
@@ -56,13 +71,13 @@ wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
 	// build table
 	$table = wire()->modules->get('MarkupAdminDataTable');
 	$table->headerRow([
-		__('Name'),
-		__('Type'),
-		__('Timing'),
-		__('Path'),
-		__('Last run'),
-		__('Last trigger'),
-		__('Action')
+			__('Name'),
+			__('Type'),
+			__('Timing'),
+			__('Path'),
+			__('Last run'),
+			__('Last trigger'),
+			__('Action')
 	]);
 	$table->encodeEntities = false;
 	$table->addClass('uk-table-striped');
@@ -83,8 +98,8 @@ wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
 		$type = ($cron->lazyCron ?? 'OnDemand');
 		if($cron->disabled) $type = "<s uk-tooltip='".__('This cron is currently disabled')."'>$type</s>";
 		$typeInfo = $cron->getArray()['lazyCron'] !== $cron->lazyCron
-			? ' <a href="#" uk-icon="warning" uk-tooltip="'.__('Unfortunately, LazyCron setting is not allowed in crons with namespaces, as they block LazyCrons running in parallel.').'"></span>'
-			: ''
+				? ' <a href="#" uk-icon="warning" uk-tooltip="'.__('Unfortunately, LazyCron setting is not allowed in crons with namespaces, as they block LazyCrons running in parallel.').'"></span>'
+				: ''
 		;
 		$row[] = $type . $typeInfo;
 
@@ -96,14 +111,14 @@ wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
 
 		// Last run
 		$row[] = $cron->trigger === CronJob::triggerNever
-			? __('Never')
-			: $datetime->formatDate($cron->lastRun, $config->dateFormat)
+				? __('Never')
+				: $datetime->formatDate($cron->lastRun, $config->dateFormat)
 		;
 
 		// trigger batch style
 		$triggerInfo = !empty($cron->lastError)
-			? ' <a href="#" uk-icon="warning" uk-tooltip="title:'.$cron->lastError.'"></span>'
-			: ''
+				? ' <a href="#" uk-icon="warning" uk-tooltip="title:'.$cron->lastError.'"></span>'
+				: ''
 		;
 		$triggerBatchClass = match($cron->trigger) {
 			CronJob::triggerForce => 'uk-label-success',
@@ -111,15 +126,15 @@ wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
 			default => ''
 		};
 		$row[] = $cron->trigger !== CronJob::triggerNever
-			? '<span class="uk-badge uk-padding-small '.$triggerBatchClass.'">'.$cron->triggerStr. '</span>' . $triggerInfo
-			: ''
+				? '<span class="uk-badge uk-padding-small '.$triggerBatchClass.'">'.$cron->triggerStr. '</span>' . $triggerInfo
+				: ''
 		;
 
 		// Action
 		$row[] =  '<a href="./run/'.$cron->name.'/" title="'
-			.__('Execute this cronjob').'" class="uk-button uk-button-text">'
-			.__('Run')
-			.'</a>';
+				.__('Execute this cronjob').'" class="uk-button uk-button-text">'
+				.__('Run')
+				.'</a>';
 
 		// Add
 		$table->row($row, ['class' => implode(' ', $rowClasses)]);
