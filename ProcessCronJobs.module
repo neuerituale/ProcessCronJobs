@@ -60,6 +60,7 @@ class ProcessCronJobs extends Process implements Module, ConfigurableModule {
 	 */
 	public function ready(): void
 	{
+		$this->register();
 		$this->run(CronJob::timingReady);
 	}
 
@@ -167,6 +168,7 @@ class ProcessCronJobs extends Process implements Module, ConfigurableModule {
 	 */
 	public function ___execute(): array
 	{
+		$this->config->styles->add($this->urls->$this . 'ProcessCronJobs.css');
 		return [
 			'processInstance' => $this,
 		];

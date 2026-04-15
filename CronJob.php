@@ -32,7 +32,7 @@ class CronJob extends WireData {
      * Reset Cron object
      * @return $this
      */
-    public function reset(): static {
+    public function reset(): CronJob {
 
         $this->data = [];
         $this->setArray([
@@ -41,6 +41,8 @@ class CronJob extends WireData {
             'lazyCron' => null,
             'ns' => null,
             'timing' => self::timingReady,
+	        'user' => null,
+	        'notes' => [],
             'lastRun' => 0,
             'disabled' => false,
             'trigger' => self::triggerNever,
@@ -56,7 +58,7 @@ class CronJob extends WireData {
      * @param $value
      * @return CronJob
      */
-    public function set($key, $value) {
+    public function set($key, $value): CronJob {
 
         $sanitizer = wire()->sanitizer;
 
@@ -83,6 +85,20 @@ class CronJob extends WireData {
 
         else if($key === 'ns') {
             $value = $sanitizer->pagePathName($value);
+        }
+
+        else if($key === 'user') {
+            if(empty($value)) {
+                $value = null;
+            } else {
+                $search = $value;
+                if(!$value instanceof User) $value = wire()->users->get($value);
+                if(!$value->id) {
+                    $this->disabled = true;
+                    $this->addNote(sprintf($this->_('User "%s" not found'), $search));
+                    $value = null;
+                }
+            }
         }
 
         else if($key === 'lastRun') {
@@ -139,11 +155,24 @@ class CronJob extends WireData {
         return parent::get($key);
     }
 
+	/**
+	 * Add a note to notes
+	 *
+	 * @param $note
+	 * @return $this
+	 */
+	public function addNote($note): CronJob {
+		$notes = $this->notes;
+		$notes[] = $note;
+		$this->set('notes', $notes);
+		return $this;
+	}
+
     /**
      * Update last run to current time
      * @return void
      */
-    public function updateLastRun() {
+    public function updateLastRun(): void {
         $this->lastRun = time();
     }
 
@@ -151,8 +180,43 @@ class CronJob extends WireData {
      * get Path
      * @return string
      */
-    public function getPath() {
+    public function getPath(): string {
         return $this->ns ? (trim($this->ns, '/') . '/') : '';
+    }
+
+	/**
+	 * Execute the cron job callback
+	 * @param int $successTrigger
+	 * @return bool
+	 */
+    private function execute(int $successTrigger): bool {
+
+        $previousUser = null;
+        if($this->user instanceof User) {
+            $previousUser = wire()->user;
+            wire()->users->setCurrentUser($this->user);
+        }
+
+        try {
+            call_user_func_array($this->callback, [$this]);
+            $this->trigger = $successTrigger;
+            $this->set('lastError', '')->updateLastRun();
+            return true;
+        }
+        catch(Exception $exception) {
+            wire()->log(
+                sprintf($this->_('CronError in "%1$s": %2$s'), $this->name, $exception->getMessage()),
+                ['name' => self::errorLog]
+            );
+            $this
+                ->set('trigger', self::triggerError)
+                ->set('lastError', $exception->getMessage())
+                ->updateLastRun();
+            return false;
+        }
+        finally {
+            if($previousUser) wire()->users->setCurrentUser($previousUser);
+        }
     }
 
 	/**
@@ -172,48 +236,13 @@ class CronJob extends WireData {
         // via lazy cron
         if($this->lazyCron && !$force) {
             $cron = $this;
-
             wire()->addHook($this->lazyCron, function() use($cron) {
-                try {
-                    call_user_func_array($cron->callback, [$cron]);
-                    $cron->trigger = self::triggerLazy;
-                    $cron->set('lastError', '')->updateLastRun();
-                    return true;
-                }
-                catch(Exception $exception) {
-                    wire()->log(
-                        sprintf($cron->_('CronError in "%1$s": %2$s'), $cron->name, $exception->getMessage()),
-                        ['name' => self::errorLog]
-                    );
-
-                    $cron
-                        ->set('trigger', self::triggerError)
-                        ->set('lastError', $exception->getMessage())
-                        ->updateLastRun();
-                    return false;
-                }
+                return $cron->execute(self::triggerLazy);
             });
+            return;
         }
 
         // every time or force
-        else {
-            try {
-                call_user_func_array($this->callback, [$this]);
-                $this->trigger = $force ? self::triggerForce : self::triggerAuto;
-                $this->set('lastError', '')->updateLastRun();
-                return true;
-            }
-            catch(Exception $exception) {
-                wire()->log(
-                    sprintf($this->_('CronError in "%1$s": %2$s'), $this->name, $exception->getMessage()),
-                    ['name' => self::errorLog]
-                );
-                $this
-                    ->set('trigger', self::triggerError)
-                    ->set('lastError', $exception->getMessage())
-                    ->updateLastRun();
-                return false;
-            }
-        }
+        return $this->execute($force ? self::triggerForce : self::triggerAuto);
     }
 }

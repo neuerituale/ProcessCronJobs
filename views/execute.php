@@ -71,13 +71,13 @@ wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
 	// build table
 	$table = wire()->modules->get('MarkupAdminDataTable');
 	$table->headerRow([
-			__('Name'),
-			__('Type'),
-			__('Timing'),
-			__('Path'),
-			__('Last run'),
-			__('Last trigger'),
-			__('Action')
+		__('Name'),
+		__('Type'),
+		__('Timing'),
+		__('Path'),
+		__('Last run'),
+		__('Last trigger'),
+		__('Action')
 	]);
 	$table->encodeEntities = false;
 	$table->addClass('uk-table-striped');
@@ -96,10 +96,9 @@ wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
 
 		// Type
 		$type = ($cron->lazyCron ?? 'OnDemand');
-		if($cron->disabled) $type = "<s uk-tooltip='".__('This cron is currently disabled')."'>$type</s>";
 		$typeInfo = $cron->getArray()['lazyCron'] !== $cron->lazyCron
-				? ' <a href="#" uk-icon="warning" uk-tooltip="'.__('Unfortunately, LazyCron setting is not allowed in crons with namespaces, as they block LazyCrons running in parallel.').'"></span>'
-				: ''
+			? ' <a href="#" uk-icon="warning" uk-tooltip="'.__('Unfortunately, LazyCron setting is not allowed in crons with namespaces, as they block LazyCrons running in parallel.').'"></span>'
+			: ''
 		;
 		$row[] = $type . $typeInfo;
 
@@ -111,30 +110,37 @@ wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
 
 		// Last run
 		$row[] = $cron->trigger === CronJob::triggerNever
-				? __('Never')
-				: $datetime->formatDate($cron->lastRun, $config->dateFormat)
+			? __('Never')
+			: $datetime->formatDate($cron->lastRun, $config->dateFormat)
 		;
 
 		// trigger batch style
-		$triggerInfo = !empty($cron->lastError)
-				? ' <a href="#" uk-icon="warning" uk-tooltip="title:'.$cron->lastError.'"></span>'
-				: ''
-		;
-		$triggerBatchClass = match($cron->trigger) {
-			CronJob::triggerForce => 'uk-label-success',
-			CronJob::triggerError => 'uk-label-danger',
+		$warnings = [];
+		if($cron->disabled) $warnings[] = __('This cron is currently disabled');
+		if(!empty($cron->lastError)) $warnings[] = $cron->lastError;
+		foreach($cron->notes as $note) $warnings[] = $note;
+
+		$warningInfo = count($warnings)
+			? ' <a href="#" uk-icon="warning" uk-tooltip="title:' . implode('<br>', $warnings) . '"></a>'
+			: '';
+		$triggerBadgeClass = match($cron->trigger) {
+			CronJob::triggerAuto => 'trigger-badge--auto',
+			CronJob::triggerForce => 'trigger-badge--manual',
+			CronJob::triggerLazy => 'trigger-badge--lazy',
+			CronJob::triggerError => 'trigger-badge--error',
 			default => ''
 		};
+		if($cron->disabled) $triggerBadgeClass .= ' trigger-badge--disabled';
 		$row[] = $cron->trigger !== CronJob::triggerNever
-				? '<span class="uk-badge uk-padding-small '.$triggerBatchClass.'">'.$cron->triggerStr. '</span>' . $triggerInfo
-				: ''
+			? '<span class="uk-badge '.$triggerBadgeClass.'">'.$cron->triggerStr.'</span>' . $warningInfo
+			: $warningInfo
 		;
 
 		// Action
-		$row[] =  '<a href="./run/'.$cron->name.'/" title="'
-				.__('Execute this cronjob').'" class="uk-button uk-button-text">'
-				.__('Run')
-				.'</a>';
+		$row[] = '<a href="./run/'.$cron->name.'/" title="'
+			.__('Execute this cronjob').'" class="uk-button uk-button-text">'
+			.__('Run')
+			.'</a>';
 
 		// Add
 		$table->row($row, ['class' => implode(' ', $rowClasses)]);

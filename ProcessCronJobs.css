@@ -1,0 +1,20 @@
+.ProcessCronJobs .uk-badge {
+	display: inline-block;
+	padding: 12px;
+}
+.ProcessCronJobs .trigger-badge--auto {
+	background: #71a5e1;
+}
+
+.ProcessCronJobs .trigger-badge--manual {
+	background: #b37c11;
+}
+.ProcessCronJobs .trigger-badge--lazy {
+	background: #115aa3;
+}
+.ProcessCronJobs .trigger-badge--error {
+	background: #f0506e;
+}
+.ProcessCronJobs .trigger-badge--disabled {
+	opacity: 0.5;
+}

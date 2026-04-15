@@ -34,12 +34,30 @@ class ProcessCronJobsConfig extends ModuleConfig
 
 		$inputfields = parent::getInputfields();
 
+		$config = wire()->config;
+		$data = wire()->modules->getConfig('ProcessCronJobs');
+		$path = trim($data['path'] ?? 'cron', '/') . '/';
+		$secret = $data['secret'] ?? '';
+		$url = rtrim($config->httpHost, '/') . $config->urls->root . $path;
+		if(!empty($secret)) $url .= trim($secret) . '/';
+
+		$inputfields->add([
+			'type' => 'InputfieldMarkup',
+			'name' => '_cronCommand',
+			'label' => $this->_('Cron command'),
+			'description' => $this->_('Add this line to your cron configuration.'),
+			'collapsed' => Inputfield::collapsedNever,
+			'themeOffset' => 'm',
+			'themeColor' => 'secondary',
+			'value' => '<pre><code>* * * * * curl --silent ' . $url . ' &>/dev/null</code></pre>',
+		]);
+
 		$inputfields->add([
 			'type' => 'InputfieldText',
 			'name' => 'path',
 			'label' => $this->_('Trigger path'),
             'description' => $this->_('The path to be called by the cronjob.'),
-            'notes' => $this->_('Set to `cron/` for an cron command like this: `\* \* \* \* \*  curl --silent https://example.come/cron/ &>/dev/null`'),
+            'notes' => $this->_('Set to `cron/` for a cron url like this: `https://example.come/cron/`'),
             'required' => true,
             'columnWidth' => 50
 		]);
