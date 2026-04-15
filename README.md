@@ -101,21 +101,6 @@ wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
 });
 ```
 
-### Notes
-You can attach notes to a CronJob. Notes are displayed as warnings in the admin overview.
-
-```php
-wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
-	/** @var ProcessCronJobs $processCronJobs */
-	$processCronJobs = $event->object;
-	$cron = $processCronJobs->add(
-		'MyCronJobWithNotes',
-		function(CronJob $cron){ echo "Working"; },
-	);
-	$cron->addNote('This CronJob requires the Hanna Code module.');
-});
-```
-
 ## Process View
 ![ProcessView](https://user-images.githubusercontent.com/11630948/268062278-458b8060-a81d-4149-822d-6e3453a043a1.png)
 
