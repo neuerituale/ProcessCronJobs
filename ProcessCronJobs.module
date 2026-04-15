@@ -24,7 +24,7 @@ class ProcessCronJobs extends Process implements Module, ConfigurableModule {
 	{
 		return [
 			'title' => 'Process Cron Jobs',
-			'version' => 110,
+			'version' => 112,
 			'summary' => __('Manage the execution of CronJobs'),
 			'icon' => 'clock-o',
 			'singular' => true,
@@ -133,6 +133,9 @@ class ProcessCronJobs extends Process implements Module, ConfigurableModule {
 				'callback' => $callback,
 			]);
 		}
+
+		// skip if already registered
+		if(array_key_exists($cron->name, $this->crons)) return $this->crons[$cron->name];
 
 		$this->crons[$cron->name] = $cron;
 		return $cron;

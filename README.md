@@ -8,6 +8,8 @@ The module provides paths under which cronjobs can be registered. It lists all r
 - Easy to set timing (onInit or onReady) and delay (LazyCron)
 - Individual path (endpoint) that executes the CronJobs. Configuration of a secret path segment and additional path segments (namespaces) for selected CronJobs.
 - Display of the time of the last execution and any error messages
+- Run CronJobs as a specific ProcessWire user
+- Notes system to attach warnings or additional info to CronJobs
 
 ## Install
 
@@ -82,6 +84,38 @@ wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
 });
 ```
 
+### Run as a specific user
+This CronJob runs as the user "cronbot". The previous user is restored after execution. If the user is not found, the CronJob is automatically disabled.
+
+```php
+wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
+	/** @var ProcessCronJobs $processCronJobs */
+	$processCronJobs = $event->object;
+	$processCronJobs->add(
+		'ImportAsSpecificUser',
+		function(CronJob $cron){ echo "Running as: " . wire()->user->name; },
+		[
+			'user' => 'cronbot',
+		]
+	);
+});
+```
+
+### Notes
+You can attach notes to a CronJob. Notes are displayed as warnings in the admin overview.
+
+```php
+wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
+	/** @var ProcessCronJobs $processCronJobs */
+	$processCronJobs = $event->object;
+	$cron = $processCronJobs->add(
+		'MyCronJobWithNotes',
+		function(CronJob $cron){ echo "Working"; },
+	);
+	$cron->addNote('This CronJob requires the Hanna Code module.');
+});
+```
+
 ## Process View
 ![ProcessView](https://user-images.githubusercontent.com/11630948/268062278-458b8060-a81d-4149-822d-6e3453a043a1.png)
 
@@ -135,6 +169,8 @@ $processCronJobs->add(
 | `ns`         | null, String | `null`                      | If empty, the CronJob is called via the default path.                                                                                                                                                                                                                                                                                                                                                  |
 | `timing`     | Integer      | `CronJob::timingReady`      | The CronJon can be called either at onInit (1) or onReady (2). OnInit is earlier and therefore faster, but not all functions of ProcessWire are available here, e.g. page and language.                                                                                                                                                                                                                |
 | `timingStr`  | String       | `onReady`                   | This is just a getter property.                                                                                                                                                                                                                                                                                                                                                                        |
+| `user`       | null, User, String, Integer | `null`                      | Run the CronJob as a specific ProcessWire user. Accepts a `User` object, username or user ID. The previous user is restored after execution. If the user is not found, the CronJob is automatically disabled and a note is added.                                                                                                                                                                      |
+| `notes`      | Array        | `[]`                        | Array of notes attached to the CronJob. Notes are displayed as warnings in the admin UI. Use `$cron->addNote('message')` to add a note.                                                                                                                                                                                                                                                               |
 | `disabled`   | Boolean      | `false`                     | This can be used to deactivate the cronjob, e.g. `disabled = $config->debug`.                                                                                                                                                                                                                                                                                                                          |
 | `trigger`    | Integer      | `CronJob::triggerNever`     | Displays the last trigger for execution. Possible values are: <br />`1` (Never): CronJob has never been executed <br />`2` (Auto): CronJob was last executed directly via the "real" Cron (onDemand). <br />`4` (Lazy): CronJob was called up with a time delay via the LazyCron. <br />`8` (Force): The CronJob was started manually <br />`16` (Error): The last call ended with an error (see log). |
 | `triggerStr` | String       | `Unknown`                   | This is just a getter property.                                                                                                                                                                                                                                                                                                                                                                        |
