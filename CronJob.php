@@ -14,6 +14,30 @@ class CronJob extends WireData {
     const errorLog = 'cronjobs-errors';
     const cronjobCacheNs = 'CronJob';
 
+    const intervals = [
+        'every30Seconds' => 30,
+        'everyMinute'    => 60,
+        'every2Minutes'  => 120,
+        'every3Minutes'  => 180,
+        'every4Minutes'  => 240,
+        'every5Minutes'  => 300,
+        'every10Minutes' => 600,
+        'every15Minutes' => 900,
+        'every30Minutes' => 1800,
+        'every45Minutes' => 2700,
+        'everyHour'      => 3600,
+        'every2Hours'    => 7200,
+        'every4Hours'    => 14400,
+        'every6Hours'    => 21600,
+        'every12Hours'   => 43200,
+        'everyDay'       => 86400,
+        'every2Days'     => 172800,
+        'every4Days'     => 345600,
+        'everyWeek'      => 604800,
+        'every2Weeks'    => 1209600,
+        'every4Weeks'    => 2419200,
+    ];
+
     const triggerNever = 1;
     const triggerAuto = 2;
     const triggerLazy = 4;
@@ -140,9 +164,10 @@ class CronJob extends WireData {
             };
         }
 
-        else if($key === 'lazyCron' && !empty($this->ns)) {
-            return null;
-        }
+		else if($key === 'typeStr') {
+			$name = preg_replace('/^LazyCron::/i', '', (string) $this->lazyCron);
+			return $name ? ucfirst($name) . ' (Lazy)' : 'OnDemand';
+		}
 
 		else if($key === 'callback') {
 			$callback = $this->data['callback'];
@@ -154,6 +179,27 @@ class CronJob extends WireData {
 
         return parent::get($key);
     }
+
+	/**
+	 * Resolve the configured lazyCron string to seconds
+	 * Accepts both `LazyCron::everyHour` and bare `everyHour` notation.
+	 * @return int|null Seconds, or null if no/unknown lazyCron set
+	 */
+	public function getInterval(): ?int {
+		if(empty($this->lazyCron)) return null;
+		$name = preg_replace('/^LazyCron::/i', '', (string) $this->lazyCron);
+		return self::intervals[$name] ?? null;
+	}
+
+	/**
+	 * Is the cron due to run based on lastRun and its interval?
+	 * @return bool
+	 */
+	public function isDue(): bool {
+		$interval = $this->getInterval();
+		if($interval === null) return false;
+		return (time() - (int) $this->lastRun) >= $interval;
+	}
 
 	/**
 	 * Add a note to notes
@@ -233,13 +279,11 @@ class CronJob extends WireData {
 			($this->disabled && !$force)
         ) return false;
 
-        // via lazy cron
+        // via lazy cron: own due-check, independent from ProcessWire's LazyCron module
         if($this->lazyCron && !$force) {
-            $cron = $this;
-            wire()->addHook($this->lazyCron, function() use($cron) {
-                return $cron->execute(self::triggerLazy);
-            });
-            return;
+            if($this->getInterval() === null) return false;
+            if(!$this->isDue()) return false;
+            return $this->execute(self::triggerLazy);
         }
 
         // every time or force

@@ -24,7 +24,7 @@ class ProcessCronJobs extends Process implements Module, ConfigurableModule {
 	{
 		return [
 			'title' => 'Process Cron Jobs',
-			'version' => 112,
+			'version' => 200,
 			'summary' => __('Manage the execution of CronJobs'),
 			'icon' => 'clock-o',
 			'singular' => true,
@@ -94,11 +94,6 @@ class ProcessCronJobs extends Process implements Module, ConfigurableModule {
 
 			// set last run time
 			wire()->cache->saveFor(self::cacheNs, 'lastRun', time());
-
-			// Workaround to bypass the response type check in LazyCron::afterPageView
-			wire()->addHookAfter('ProcessPageView::finished', function() {
-				wire()->process->setResponseType(ProcessPageView::responseTypeNormal);
-			}, ['priority' => 1]);
 
 			/** @var CronJob $cron */
 			foreach (array_filter($crons, function($cron) use($timing) { return $cron->timing === $timing; }) as $cron) {

@@ -10,26 +10,10 @@ namespace ProcessWire;
 /**
  * @global ProcessCronJobs $processInstance
  * @global Config $config
- * @global Modules $modules
  * @global WireCache $cache
  * @global WireDateTime $datetime
  */
-
-$hasLazyCron = count(array_column($processInstance->crons, 'lazyCron'));
-if($hasLazyCron && !$modules->isInstalled('LazyCron')) :
-	$url = $modules->getModuleEditUrl('LazyCron', false);
-	?>
-
-	<div class="uk-card uk-alert-warning uk-card-primary uk-margin">
-		<div>
-			<div class="uk-card-body uk-text-default uk-text-emphasis uk-padding-small uk-text-center">
-				<?= __('You have registered lazy crons, but the module has not yet been installed.'); ?><br>
-				<a href="<?= $url; ?>"><?= __('Please install the lazycron core module.'); ?></a>
-			</div>
-		</div>
-	</div>
-
-<?php endif; ?>
+?>
 
 <?php if(!$processInstance->isEnabled()) : ?>
 	<div class="uk-card uk-alert-warning uk-card-primary uk-margin">
@@ -95,12 +79,7 @@ wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
 		$row[] = '&nbsp; ' . $cron->name;
 
 		// Type
-		$type = ($cron->lazyCron ?? 'OnDemand');
-		$typeInfo = $cron->getArray()['lazyCron'] !== $cron->lazyCron
-			? ' <a href="#" uk-icon="warning" uk-tooltip="'.__('Unfortunately, LazyCron setting is not allowed in crons with namespaces, as they block LazyCrons running in parallel.').'"></span>'
-			: ''
-		;
-		$row[] = $type . $typeInfo;
+		$row[] = $cron->typeStr;
 
 		// Timing
 		$row[] = $cron->timingStr;
@@ -109,10 +88,12 @@ wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
 		$row[] = $path . $cron->getPath();
 
 		// Last run
-		$row[] = $cron->trigger === CronJob::triggerNever
+		$lastRunSortValue = "<span class='uk-hidden'>".(int) $cron->lastRun."</span> ";
+		$lastRunValue = $cron->trigger === CronJob::triggerNever
 			? __('Never')
 			: $datetime->formatDate($cron->lastRun, $config->dateFormat)
 		;
+		$row[] = $lastRunSortValue . $lastRunValue;
 
 		// trigger batch style
 		$warnings = [];

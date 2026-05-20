@@ -5,11 +5,12 @@ The module provides paths under which cronjobs can be registered. It lists all r
 
 ## Features
 - Clear overview of all registered CronJobs
-- Easy to set timing (onInit or onReady) and delay (LazyCron)
+- Easy to set timing (onInit or onReady) and a built-in interval-based delay
 - Individual path (endpoint) that executes the CronJobs. Configuration of a secret path segment and additional path segments (namespaces) for selected CronJobs.
 - Display of the time of the last execution and any error messages
 - Run CronJobs as a specific ProcessWire user
 - Notes system to attach warnings or additional info to CronJobs
+- Self-contained scheduling — no dependency on the LazyCron core module
 
 ## Install
 
@@ -18,9 +19,10 @@ The module provides paths under which cronjobs can be registered. It lists all r
 3. Go to Setup > CronJobs
 4. Copy and Install example Module (`modules/ProcessCronJobs/example/ProcessCronJobsRegistration.module.example`) to register your CronJobs in the `__constructor()` method.
 You can also use any other `__constructor()` method. It makes sense to register the CronJobs as early as possible so that they can also be executed on onInit.
-5. Set up the real cron that calls the ProcessCronJobs provided endpoint.
+5. Set up the real cron that calls the ProcessCronJobs provided endpoint once per minute.
 	- Type `crontab -e` in your unix console
 	- Add this line and save the file: `* * * * * curl --silent "https://example.com/cron/"` [Find out more about setting up CronJobs (Wikipedia).](https://en.wikipedia.org/wiki/Cron)
+	- ProcessCronJobs decides on every call which of the registered CronJobs is due (based on its `lazyCron` interval and the last successful run).
 
 ## Install via composer
 1. Execute the following command in your website root directory.
@@ -65,9 +67,7 @@ wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
 This CronJob runs for a very long time and is called directly by a "real" CronJob so as not to block other CronJobs.
 The endpoint for this CronJob is https://example.com/cron/longrunning/ or https://example.com/cron/###your_secret###/longrunning/.
 
-CronJobs that have a namespace (own path segment) cannot be delayed with LazyCron,
-because LazyCron can only be started by a single request.
-LazyCron creates a lock file and thus blocks the execution of parallel calls.
+A namespace (own path segment) can be combined with `lazyCron` if you also want the namespaced CronJob to be filtered by an interval.
 
 ```php
 wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
@@ -83,6 +83,13 @@ wire()->addHookBefore('ProcessCronJobs::register', function(HookEvent $event){
 	);
 });
 ```
+
+## Supported `lazyCron` intervals
+The `lazyCron` option accepts the following names (with or without the `LazyCron::` prefix — `'everyHour'` and `'LazyCron::everyHour'` are equivalent):
+
+`every30Seconds`, `everyMinute`, `every2Minutes`, `every3Minutes`, `every4Minutes`, `every5Minutes`, `every10Minutes`, `every15Minutes`, `every30Minutes`, `every45Minutes`, `everyHour`, `every2Hours`, `every4Hours`, `every6Hours`, `every12Hours`, `everyDay`, `every2Days`, `every4Days`, `everyWeek`, `every2Weeks`, `every4Weeks`.
+
+Due-state is checked against `lastRun`, so a CronJob with `'lazyCron' => 'everyHour'` runs at most once per hour — independent of how often the trigger endpoint is hit and independent of other page views.
 
 ### Run as a specific user
 This CronJob runs as the user "cronbot". The previous user is restored after execution. If the user is not found, the CronJob is automatically disabled.
@@ -150,7 +157,7 @@ $processCronJobs->add(
 |--------------|--------------|-----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `name`       | String       |                             | Unique name in PascalCase e.g. `MyFirstCronJob`.                                                                                                                                                                                                                                                                                                                                                       |
 | `callback`   | Callable     | `function(CronJob $cron){}` | Function to be executed. Can be an anonymous function, an array `[$object, 'methodName']`, or a static class method string `'\\ProcessWire\\MyClass::myStaticFunction'`.                                                                                                                                                                                                                              |
-| `lazyCron`   | null, String | `null`                      | If empty, the CronJob is executed without delay as soon as the path is called.                                                                                                                                                                                                                                                                                                                         |
+| `lazyCron`   | null, String | `null`                      | If empty, the CronJob is executed without delay as soon as the path is called. Otherwise accepts an interval name like `'everyHour'` or `'LazyCron::everyHour'`; the CronJob is then only executed when its `lastRun` is older than the interval. Independent from PW's LazyCron module.                                                                                                              |
 | `ns`         | null, String | `null`                      | If empty, the CronJob is called via the default path.                                                                                                                                                                                                                                                                                                                                                  |
 | `timing`     | Integer      | `CronJob::timingReady`      | The CronJon can be called either at onInit (1) or onReady (2). OnInit is earlier and therefore faster, but not all functions of ProcessWire are available here, e.g. page and language.                                                                                                                                                                                                                |
 | `timingStr`  | String       | `onReady`                   | This is just a getter property.                                                                                                                                                                                                                                                                                                                                                                        |

@@ -38,7 +38,7 @@ class ProcessCronJobsConfig extends ModuleConfig
 		$data = wire()->modules->getConfig('ProcessCronJobs');
 		$path = trim($data['path'] ?? 'cron', '/') . '/';
 		$secret = $data['secret'] ?? '';
-		$url = rtrim($config->httpHost, '/') . $config->urls->root . $path;
+		$url = $config->urls->httpRoot . $path;
 		if(!empty($secret)) $url .= trim($secret) . '/';
 
 		$inputfields->add([
