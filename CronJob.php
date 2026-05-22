@@ -166,7 +166,7 @@ class CronJob extends WireData {
 
 		else if($key === 'typeStr') {
 			$name = preg_replace('/^LazyCron::/i', '', (string) $this->lazyCron);
-			return $name ? ucfirst($name) . ' (Lazy)' : 'OnDemand';
+			return $name ? $name . ' (Lazy)' : 'onDemand';
 		}
 
 		else if($key === 'callback') {
