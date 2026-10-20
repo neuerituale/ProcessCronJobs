@@ -90,7 +90,10 @@ class ProcessCronJobs extends Process implements Module, ConfigurableModule {
 		$path = $this->getPath();
 		$crons = $this->crons;
 
-		wire()->addHook(rtrim($path, '/') . '(\/[a-z0-9-]+)?/', function() use($path, $crons, $requestPath, $timing) {
+		// path hooks are matched relative to the installation root, so strip it (e.g. /api/)
+		$hookPath = substr($path, strlen(wire()->config->urls->root) - 1);
+
+		wire()->addHook(rtrim($hookPath, '/') . '(\/[a-z0-9-]+)?/', function() use($path, $crons, $requestPath, $timing) {
 
 			// set last run time
 			wire()->cache->saveFor(self::cacheNs, 'lastRun', time());
