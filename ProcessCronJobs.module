@@ -93,14 +93,14 @@ class ProcessCronJobs extends Process implements Module, ConfigurableModule {
 		// path hooks are matched relative to the installation root, so strip it (e.g. /api/)
 		$hookPath = substr($path, strlen(wire()->config->urls->root) - 1);
 
-		wire()->addHook(rtrim($hookPath, '/') . '(\/[a-z0-9-]+)?/', function() use($path, $crons, $requestPath, $timing) {
+		wire()->addHook(rtrim($hookPath, '/') . '(\/[a-z0-9-]+)?/', function() use($hookPath, $crons, $requestPath, $timing) {
 
 			// set last run time
 			wire()->cache->saveFor(self::cacheNs, 'lastRun', time());
 
 			/** @var CronJob $cron */
 			foreach (array_filter($crons, function($cron) use($timing) { return $cron->timing === $timing; }) as $cron) {
-				if($requestPath === $path . $cron->getPath()) $cron->run();
+				if($requestPath === $hookPath . $cron->getPath()) $cron->run();
 			}
 
 			return true;
